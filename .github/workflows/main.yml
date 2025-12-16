@@ -1,4 +1,4 @@
-name: Build for Android
+name: Build for LDPlayer (Android x86_64)
 
 on:
   workflow_dispatch:
@@ -10,19 +10,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Android NDK
-      uses: n0rt3n/setup-ndk@v1
-      with:
-        ndk-version: r25c
-
-    - name: Build with NDK
+    - name: Build with NDK (x86_64)
       run: |
-        $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++ \
-        main.cpp -o linux_injector_android \
+        # Sử dụng NDK có sẵn trong máy ảo Ubuntu của GitHub
+        $ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android33-clang++ \
+        main.cpp -o linux_injector_ldplayer \
         -static-libstdc++ -latomic -ldl
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: injector_android
-        path: linux_injector_android
+        name: injector_x86_64
+        path: linux_injector_ldplayer
