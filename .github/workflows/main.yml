@@ -1,31 +1,28 @@
-name: Build Linux Injector
+name: Build for Android
 
 on:
-  push:
-    branches: [ "master" ]
-  workflow_dispatch: # Cho phép bạn nhấn nút build thủ công bất cứ lúc nào
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Set up Android NDK
+      uses: n0rt3n/setup-ndk@v1
+      with:
+        ndk-version: r25c
+
+    - name: Build with NDK
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake build-essential
+        $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android33-clang++ \
+        main.cpp -o linux_injector_android \
+        -static-libstdc++ -latomic -ldl
 
-    - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
-
-    - name: Build project
-      run: cmake --build build --config Release
-
-    - name: Upload Build Artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: linux_injector_binary
-        path: build/linux_injector
+        name: injector_android
+        path: linux_injector_android
